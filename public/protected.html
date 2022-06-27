@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruta protegida</title>
+</head>
+<body>
+    <h1>Ruta protegida</h1>
+    <div>
+        <h2 id="app">Requiere loguearse!</h2>
+        <button id="logout">Cerrar sesion</button>
+    </div>
+
+    <script>
+        // LOGOUT
+        const logout = document.getElementById('logout');
+        logout.addEventListener('click', async () => {
+            const res = await fetch('/api/v1/auth/logout', {
+                method: 'GET',
+                // headers: {
+                //     "Content-Type": 'application/json',
+                //     "Authorization": `Bearer ${token}`,
+                // },
+                //credentials: 'include'
+            });
+            console.log(res);
+        })
+
+        //
+        document.addEventListener('DOMContentLoaded', async (e) => {
+            try {
+                // TOKEN: En duro
+                /* const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2MjlkODVkNjczYTdjNGY4NDEzM2U4MWYiLCJpYXQiOjE2NTQ2OTY3OTUsImV4cCI6MTY1NDY5NzY5NX0.wh4IZPo5Qcal8HcjhLGZlzrLd4drsanevyOICLIJS28." */
+
+                // TOKEN: Recuperar el token de la localstorage (se reemplaza por Cookie httpOnly)
+                //const token = localStorage.getItem("token");
+
+                // Devolvemos el TOKEN de seguridad
+                const resToken = await fetch("/api/v1/auth/refresh", {
+                    method: "GET",
+                    credentials: "include",
+                });
+                const { token } = await resToken.json();
+
+                //
+                const res = await fetch('/api/v1/auth/protected', {
+                    method: 'GET',
+                    headers: {
+                        "Content-Type": 'application/json',
+                        "Authorization": `Bearer ${token}`,
+                    },
+                    //credentials: 'include'
+                });
+                console.log(res.ok, res.status)
+                const data = await res.json();
+
+                if(res.ok) {
+                    document.getElementById('app').textContent = data.email;
+                }
+
+                console.log(data)
+            } catch (error) {
+                console.log(error)
+            }
+        })
+    </script>
+</body>
+</html>

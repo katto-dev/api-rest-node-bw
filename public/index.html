@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Login</title>
+    </head>
+    <body>
+        <form id="form">
+            <input type="email" value="info@gmail.com" id="email" />
+            <input type="password" value="123123" id="password" />
+            <button type="submit">Acceder</button>
+        </form>
+
+        <script>
+        const form = document.getElementById("form");
+        const email = document.getElementById("email");
+        const password = document.getElementById("password");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            try {
+                const res = await fetch("http://localhost:5000/api/v1/auth/login", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    //'Content-Type': 'application/x-www-form-
+                    },
+                    body: JSON.stringify({
+                    email: email.value,
+                    password: password.value
+                    }),
+                });
+                console.log("Ok: " + res.ok, "Status: " +res.status);
+
+                //const data = await res.json();
+                //console.log(data)
+
+                // TOKEN: Almacenamos el token en el localstorage (se reemplaza por Cookie httpOnly)
+                //const { token } = await res.json();
+                //localStorage.setItem("token", token)
+
+            } catch (error) {
+                console.log(error);
+            }
+        });
+    
+        </script>
+    </body>
+</html>
